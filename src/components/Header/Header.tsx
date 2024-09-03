@@ -8,6 +8,7 @@ interface OptionItemType {
 interface OptionType {
   count: number;
   title: string;
+  minLimit: number;
 }
 
 type OptionsType = OptionType[];
@@ -22,17 +23,26 @@ interface OptionItemComponentType extends GuestOptionListComponentType {
 
 type GuestOptionListType = OptionItemType[];
 
+const guestOptionList: GuestOptionListType = [
+  { id: 1, title: "Adult" },
+  { id: 2, title: "Children" },
+  { id: 3, title: "Room" },
+];
+
+const optionsData: OptionsType = [
+  {
+    count: 1,
+    title: "Adult",
+    minLimit: 1,
+  },
+  { count: 0, title: "Children", minLimit: 0 },
+  { count: 1, title: "Room", minLimit: 0 },
+];
+
 function Header() {
   const [destination, setDestination] = useState<string>("");
   const [openOptions, setOpenOptions] = useState<boolean>(false);
-  const [options, setOptions] = useState<OptionsType>([
-    {
-      count: 1,
-      title: "Adult",
-    },
-    { count: 0, title: "Children" },
-    { count: 1, title: "Room" },
-  ]);
+  const [options, setOptions] = useState<OptionsType>(optionsData);
   return (
     <div className="header">
       <div className="headerSearch">
@@ -80,12 +90,6 @@ function Header() {
   );
 }
 
-const guestOptionList: GuestOptionListType = [
-  { id: 1, title: "Adult" },
-  { id: 2, title: "Children" },
-  { id: 3, title: "Room" },
-];
-
 const GuestOptionList = ({
   options,
   setOptions,
@@ -110,26 +114,18 @@ const OptionItem = ({
   setOptions,
 }: OptionItemComponentType) => {
   const option = options.find((optionItem) => optionItem.title === title);
+  if (!option) return;
 
-  const decreaseCount = () => {
+  const handleOptions = (operation: "inc" | "dec") => {
     setOptions((prevOptions) =>
       prevOptions.map((prevOption) =>
-        prevOption.title === title && prevOption.count !== 0
+        prevOption.title === title
           ? {
               ...prevOption,
-              count: prevOption.count - 1,
-            }
-          : prevOption
-      )
-    );
-  };
-  const increaseCount = () => {
-    setOptions((prevOptions) =>
-      prevOptions.map((prevOption) =>
-        prevOption.title === title 
-          ? {
-              ...prevOption,
-              count: prevOption.count + 1,
+              count:
+                operation === "dec"
+                  ? prevOption.count - 1
+                  : prevOption.count + 1,
             }
           : prevOption
       )
@@ -139,11 +135,18 @@ const OptionItem = ({
     <div className="guestOptionItem">
       <span className="optionText">{title}</span>
       <div className="optionCounter">
-        <button className="optionCounterBtn" onClick={decreaseCount}>
+        <button
+          disabled={option?.count <= option?.minLimit}
+          className="optionCounterBtn"
+          onClick={() => handleOptions("dec")}
+        >
           <HiMinus className="icon" />
         </button>
         <span className="optionCounterNumber">{option?.count}</span>
-        <button className="optionCounterBtn" onClick={increaseCount}>
+        <button
+          className="optionCounterBtn"
+          onClick={() => handleOptions("inc")}
+        >
           <HiPlus className="icon" />
         </button>
       </div>
