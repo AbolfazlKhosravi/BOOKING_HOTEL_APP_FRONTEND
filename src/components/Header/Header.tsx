@@ -28,7 +28,11 @@ interface OptionItemComponentType {
   options: OptionsType;
   setOptions: React.Dispatch<React.SetStateAction<OptionsType>>;
 }
-
+interface ChoseDateRangeType {
+  date: Range;
+  setDate: React.Dispatch<React.SetStateAction<Range>>;
+  setOpenDateRange: React.Dispatch<React.SetStateAction<boolean>>;
+}
 type GuestOptionListType = OptionItemType[];
 
 const guestOptionList: GuestOptionListType = [
@@ -82,16 +86,18 @@ function Header() {
           <div
             onClick={() => setOpenDateRange((prev) => !prev)}
             className="dateDropDown"
+            id="dateDropDown"
           >
-           {`${format(date.startDate ?? new Date(),"dd-MMM-yyy")} to ${format(date.endDate ?? new Date(),"dd-MMM-yyy")}`}
+            {`${format(date.startDate ?? new Date(), "dd-MMM-yyy")} to ${format(
+              date.endDate ?? new Date(),
+              "dd-MMM-yyy"
+            )}`}
           </div>
           {openDateRange && (
-            <DateRange
-              className="date"
-              ranges={[date]}
-              onChange={(item:RangeKeyDict) => setDate(item.selection)}
-              moveRangeOnFirstSelection={true}
-              minDate={new Date()}
+            <ChoseDateRange
+              setOpenDateRange={setOpenDateRange}
+              date={date}
+              setDate={setDate}
             />
           )}
           <span className="seperator"></span>
@@ -123,6 +129,26 @@ function Header() {
     </div>
   );
 }
+
+const ChoseDateRange = ({
+  date,
+  setOpenDateRange,
+  setDate,
+}: ChoseDateRangeType) => {
+  const dateRangeRef = useRef<HTMLDivElement>(null);
+  useOutSideCick(dateRangeRef, "dateDropDown", () => setOpenDateRange(false));
+  return (
+    <div ref={dateRangeRef}>
+      <DateRange
+        className="date"
+        ranges={[date]}
+        onChange={(item: RangeKeyDict) => setDate(item.selection)}
+        moveRangeOnFirstSelection={true}
+        minDate={new Date()}
+      />
+    </div>
+  );
+};
 
 const GuestOptionList = ({
   options,
