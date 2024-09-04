@@ -2,6 +2,10 @@ import React, { useRef, useState } from "react";
 import { HiCalendar, HiMinus, HiPlus, HiSearch } from "react-icons/hi";
 import { MdLocationOn } from "react-icons/md";
 import useOutSideCick from "../../hooks/useOutSideClick";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { DateRange, Range, RangeKeyDict } from "react-date-range";
+import { format } from "date-fns";
 interface OptionItemType {
   id: number;
   title: string;
@@ -16,10 +20,10 @@ type OptionsType = OptionType[];
 interface GuestOptionListComponentType {
   options: OptionsType;
   setOptions: React.Dispatch<React.SetStateAction<OptionsType>>;
-  setOpenOptions:React.Dispatch<React.SetStateAction<boolean>>
+  setOpenOptions: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface OptionItemComponentType  {
+interface OptionItemComponentType {
   title: string;
   options: OptionsType;
   setOptions: React.Dispatch<React.SetStateAction<OptionsType>>;
@@ -46,7 +50,15 @@ const optionsData: OptionsType = [
 function Header() {
   const [destination, setDestination] = useState<string>("");
   const [openOptions, setOpenOptions] = useState<boolean>(false);
+  const [openDateRange, setOpenDateRange] = useState<boolean>(false);
   const [options, setOptions] = useState<OptionsType>(optionsData);
+  const [date, setDate] = useState<Range>({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  });
+
+
   return (
     <div className="header">
       <div className="headerSearch">
@@ -67,7 +79,21 @@ function Header() {
         </div>
         <div className="headerSearchItem">
           <HiCalendar className="headerIcon dateIcon" />
-          <div className="dateDropDown">2024/3/9</div>
+          <div
+            onClick={() => setOpenDateRange((prev) => !prev)}
+            className="dateDropDown"
+          >
+           {`${format(date.startDate ?? new Date(),"dd-MMM-yyy")} to ${format(date.endDate ?? new Date(),"dd-MMM-yyy")}`}
+          </div>
+          {openDateRange && (
+            <DateRange
+              className="date"
+              ranges={[date]}
+              onChange={(item:RangeKeyDict) => setDate(item.selection)}
+              moveRangeOnFirstSelection={true}
+              minDate={new Date()}
+            />
+          )}
           <span className="seperator"></span>
         </div>
         <div className="headerSearchItem">
@@ -80,7 +106,11 @@ function Header() {
             ))}
           </div>
           {openOptions && (
-            <GuestOptionList options={options} setOptions={setOptions} setOpenOptions={setOpenOptions} />
+            <GuestOptionList
+              options={options}
+              setOptions={setOptions}
+              setOpenOptions={setOpenOptions}
+            />
           )}
           <span className="seperator"></span>
         </div>
@@ -97,10 +127,12 @@ function Header() {
 const GuestOptionList = ({
   options,
   setOptions,
-  setOpenOptions
+  setOpenOptions,
 }: GuestOptionListComponentType) => {
   const optionListRef = useRef<HTMLDivElement>(null);
-  useOutSideCick(optionListRef,"optionDropDown",() => setOpenOptions((prevData)=>!prevData));
+  useOutSideCick(optionListRef, "optionDropDown", () =>
+    setOpenOptions((prevData) => !prevData)
+  );
   return (
     <div className="guestOptions" ref={optionListRef}>
       {guestOptionList.map((optionItem) => (
