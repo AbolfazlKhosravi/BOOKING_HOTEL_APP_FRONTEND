@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { HiCalendar, HiMinus, HiPlus, HiSearch } from "react-icons/hi";
 import { MdLocationOn } from "react-icons/md";
+import useOutSideCick from "../../hooks/useOutSideClick";
 interface OptionItemType {
   id: number;
   title: string;
@@ -15,10 +16,13 @@ type OptionsType = OptionType[];
 interface GuestOptionListComponentType {
   options: OptionsType;
   setOptions: React.Dispatch<React.SetStateAction<OptionsType>>;
+  setOpenOptions:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface OptionItemComponentType extends GuestOptionListComponentType {
+interface OptionItemComponentType  {
   title: string;
+  options: OptionsType;
+  setOptions: React.Dispatch<React.SetStateAction<OptionsType>>;
 }
 
 type GuestOptionListType = OptionItemType[];
@@ -69,14 +73,14 @@ function Header() {
         <div className="headerSearchItem">
           <div id="optionDropDown" onClick={() => setOpenOptions(!openOptions)}>
             {options.map((option, index) => (
-              <span key={option.title}>
+              <span id="optionDropDown" key={option.title}>
                 {option.count} {option.title}
                 {options.length !== index + 1 ? <span> &bull; </span> : ""}
               </span>
             ))}
           </div>
           {openOptions && (
-            <GuestOptionList options={options} setOptions={setOptions} />
+            <GuestOptionList options={options} setOptions={setOptions} setOpenOptions={setOpenOptions} />
           )}
           <span className="seperator"></span>
         </div>
@@ -93,9 +97,12 @@ function Header() {
 const GuestOptionList = ({
   options,
   setOptions,
+  setOpenOptions
 }: GuestOptionListComponentType) => {
+  const optionListRef = useRef<HTMLDivElement>(null);
+  useOutSideCick(optionListRef,"optionDropDown",() => setOpenOptions((prevData)=>!prevData));
   return (
-    <div className="guestOptions">
+    <div className="guestOptions" ref={optionListRef}>
       {guestOptionList.map((optionItem) => (
         <OptionItem
           key={optionItem.id}
