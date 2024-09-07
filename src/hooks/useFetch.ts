@@ -7,7 +7,7 @@ interface FetchResult<T> {
   isLoading: boolean;
 }
 
-function useFetch<T>(URL: string, query: string): FetchResult<T> {
+function useFetch<T>(URL: string, query: string=""): FetchResult<T> {
   const [data, setData] = useState<Array<T>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -15,8 +15,8 @@ function useFetch<T>(URL: string, query: string): FetchResult<T> {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get<T[]>(`${URL}?${query}`);
-        setData(response.data);
+        const { data } = await axios.get<T[]>(`${URL}?${query}`);
+        setData(data);
       } catch (error) {
         setData([]);
         if (error instanceof Error) {
