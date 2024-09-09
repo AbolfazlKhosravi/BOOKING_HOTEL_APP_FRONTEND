@@ -1,25 +1,18 @@
-import useFetch from "../../hooks/useFetch";
+import { HomeDataType } from "../../routes/Hoom";
 import Loader from "../Loader";
-export interface HotelType {
-  id: number;
-  pictuer_url: string;
-  smart_location: string;
-  name: string;
-  price: number;
+
+interface Props {
+  isLoading: boolean;
+  data: HomeDataType|null;
 }
-
-function LocationList() {
-  const { data, isLoading } = useFetch<HotelType>(
-    "http://localhost:3000/api/hotels",
-    ""
-  );
-
+function LocationList({ isLoading, data }: Props) {
   if (isLoading) return <Loader />;
+
   return (
     <div className="nearbyLocation">
       <h2>Nearby Locations</h2>
       <div className="locationList">
-        {data.map((item) => {
+        {data ? data.hotels.map((item) => {
           return (
             <div key={item.id} className="locationItem">
               <img src={item.pictuer_url} alt={item.name} />
@@ -32,7 +25,7 @@ function LocationList() {
               </div>
             </div>
           );
-        })}
+        }):<p>خطایی وجود دارد </p>}
       </div>
     </div>
   );

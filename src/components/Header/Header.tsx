@@ -6,13 +6,15 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { DateRange, Range, RangeKeyDict } from "react-date-range";
 import { format } from "date-fns";
+import { useLocation, useNavigate } from "react-router-dom";
+import qs from "qs";
 interface OptionItemType {
   id: number;
   title: string;
 }
 interface OptionType {
   count: number;
-  title: string;
+  title: "Adult" | "Children" | "Room";
   minLimit: number;
 }
 
@@ -61,11 +63,31 @@ function Header() {
     endDate: new Date(),
     key: "selection",
   });
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const queryStr: string = qs.stringify({
+    date,
+    destination,
+    options: options.map((option) => {
+      return {
+        count: option.count,
+        title: option.title,
+      };
+    }),
+  });
 
   return (
     <div className="header">
       <div className="headerSearch">
+        <div className="headerSearchItem">
+          {location.pathname === "/"
+            ? "Hoom"
+            : location.pathname === "/hotels"
+            ? "Hotels"
+            : ""}
+          <span className="seperator"></span>
+        </div>
         <div className="headerSearchItem">
           <MdLocationOn className="headerIcon locationIcon" />
           <input
@@ -121,7 +143,15 @@ function Header() {
           <span className="seperator"></span>
         </div>
         <div className="headerSearchItem">
-          <button className="headerSearchBtn">
+          <button
+            className="headerSearchBtn"
+            onClick={() =>
+              navigate({
+                pathname: "/hotels",
+                search: queryStr,
+              })
+            }
+          >
             <HiSearch className="headerIcon" />
           </button>
         </div>

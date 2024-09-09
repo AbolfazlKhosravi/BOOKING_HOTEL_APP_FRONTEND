@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface FetchResult<T> {
-  data: T[];
+  data: T | null;
   isLoading: boolean;
 }
 
 function useFetch<T>(URL: string, query: string=""): FetchResult<T> {
-  const [data, setData] = useState<Array<T>>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [data, setData] = useState<T|null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get<T[]>(`${URL}?${query}`);
+        const { data } = await axios.get<T>(`${URL}${query}`);
         setData(data);
       } catch (error) {
-        setData([]);
+        setData(null);
         if (error instanceof Error) {
           toast.error(error?.message || "An error occurred.");
         } else {
