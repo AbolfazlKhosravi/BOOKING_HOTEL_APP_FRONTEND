@@ -53,6 +53,18 @@ const optionsData: OptionsType = [
   { count: 1, title: "Room", minLimit: 0 },
 ];
 
+interface QueryStrType {
+  destination: string;
+  options: {
+    count: number;
+    title: "Adult" | "Children" | "Room";
+  }[];
+  date: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
 function Header() {
   const [destination, setDestination] = useState<string>("");
   const [openOptions, setOpenOptions] = useState<boolean>(false);
@@ -66,8 +78,13 @@ function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const queryStr: string = qs.stringify({
-    date,
+  const filterData: QueryStrType = {
+    date: {
+      startDate: date.startDate
+        ? date.startDate.toISOString().split("T")[0]
+        : "",
+      endDate: date.endDate ? date.endDate.toISOString().split("T")[0] : "",
+    },
     destination,
     options: options.map((option) => {
       return {
@@ -75,7 +92,8 @@ function Header() {
         title: option.title,
       };
     }),
-  });
+  };
+  const queryStr: string = qs.stringify(filterData);
 
   return (
     <div className="header">
