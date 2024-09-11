@@ -54,44 +54,66 @@ const optionsData: OptionsType = [
 ];
 
 interface QueryStrType {
-  destination: string;
-  options: {
-    count: number;
+  destination?: string;
+  options?: {
+    count: string | number;
     title: "Adult" | "Children" | "Room";
+    minLimit: string | number;
   }[];
-  date: {
-    startDate: string;
-    endDate: string;
+  date?: {
+    startDate?: string | Date;
+    endDate?: string | Date;
+    key?: string;
   };
 }
 
+const initialaDate: Range = {
+  startDate: new Date(),
+  endDate: new Date(),
+  key: "selection",
+};
+
 function Header() {
-  const [destination, setDestination] = useState<string>("");
+  const location = useLocation();
+  const parseQueary: QueryStrType = qs.parse(location.search.split("?")[1]);
+
+  const [destination, setDestination] = useState<string>(
+    parseQueary.destination ? parseQueary.destination : ""
+  );
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
-  const [options, setOptions] = useState<OptionsType>(optionsData);
-  const [date, setDate] = useState<Range>({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  });
-  const location = useLocation();
+  const [options, setOptions] = useState<OptionsType>(
+    parseQueary.options
+      ? parseQueary.options.map((option): OptionType => {
+          return {
+            count: Number(option.count),
+            title: option.title,
+            minLimit: Number(option.minLimit),
+          };
+        })
+      : optionsData
+  );
+  const [date, setDate] = useState<Range>(
+    parseQueary.date
+      ? {
+          startDate: new Date(
+            parseQueary.date?.startDate || new Date().toISOString()
+          ),
+          endDate: new Date(
+            parseQueary.date?.endDate
+              ? parseQueary.date?.endDate
+              : new Date().toDateString()
+          ),
+          key: parseQueary.date.key,
+        }
+      : initialaDate
+  );
   const navigate = useNavigate();
 
   const filterData: QueryStrType = {
-    date: {
-      startDate: date.startDate
-        ? date.startDate.toISOString().split("T")[0]
-        : "",
-      endDate: date.endDate ? date.endDate.toISOString().split("T")[0] : "",
-    },
+    date,
     destination,
-    options: options.map((option) => {
-      return {
-        count: option.count,
-        title: option.title,
-      };
-    }),
+    options,
   };
   const queryStr: string = qs.stringify(filterData);
 

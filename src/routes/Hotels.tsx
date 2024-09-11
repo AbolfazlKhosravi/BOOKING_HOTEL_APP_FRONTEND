@@ -8,14 +8,21 @@ export interface HotelType {
   smart_location: string;
   name: string;
   price: number;
+  summary:string;
+  description:string;
+  street:string;
+  city:string;
+  state:string;
+  country:string
 }
 export default function Hotels() {
   const location = useLocation();
-
+ 
   const { data, isLoading } = useFetch<HotelType[]>(
     "http://localhost:3000/api/hotels",
     location.search
   );
+  
 
   if (isLoading) return <Loader />;
   if (!data) return <p>چیزی یافت نشد </p>;
