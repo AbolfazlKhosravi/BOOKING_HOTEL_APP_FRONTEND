@@ -8,7 +8,7 @@ export type MapCenterType = [number, number];
 function Map() {
   const { hotels, isLoading } = useStatesHotels();
   const [mapCenter, setMapCenter] = useState<MapCenterType>([48, 5]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { err, getGeoLocation, isLoading:isLoadingGeoLocation, position:positionGeoLocation } = useGeoLocation();
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
@@ -19,9 +19,8 @@ function Map() {
   useEffect(()=>{
     if(positionGeoLocation) setMapCenter(positionGeoLocation)
   },[positionGeoLocation])
-  console.log(mapCenter);
 
-  // if (isLoading) return <Loader />;
+  if (isLoading) return <Loader />;
   return (
     <div className="mapContainer">
       <MapContainer
