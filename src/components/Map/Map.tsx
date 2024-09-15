@@ -1,9 +1,9 @@
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import { useStatesHotels } from "../context/contextHotels";
 import Loader from "../Loader";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useGeoLocation from "../../hooks/useGeoLocation";
+import { useStatesHotels } from "../context/useContexts";
 export type MapCenterType = [number, number];
 function Map() {
   const { hotels, isLoading } = useStatesHotels();

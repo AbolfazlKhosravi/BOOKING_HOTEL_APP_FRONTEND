@@ -7,24 +7,24 @@ import HotelsLayout from "./components/Layout/HotelsLayout";
 import Hotels from "./routes/Hotels";
 import HotelsProvider from "./components/context/HotelsProvider";
 import SingleHotel from "./routes/SingleHotel";
+import CurrentHotelsProvider from "./components/context/CurrentHotelsProvider";
 function App() {
   return (
     <HotelsProvider>
-      <div>
-        <Toaster />
-        <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Hoom />} />
-            <Route path="hotels" element={<HotelsLayout />}>
-              <Route index element={<Hotels />} />
-              <Route
-                path=":id"
-                element={<SingleHotel/>}
-              />
+      <CurrentHotelsProvider>
+        <div>
+          <Toaster />
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Hoom />} />
+              <Route path="hotels" element={<HotelsLayout />}>
+                <Route index element={<Hotels />} />
+                <Route path=":id" element={<SingleHotel />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </div>
+          </Routes>
+        </div>
+      </CurrentHotelsProvider>
     </HotelsProvider>
   );
 }
