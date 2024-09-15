@@ -5,10 +5,7 @@ import {
   SetStatesHotelsContext,
   StatesHotelsProviderType,
 } from "./HotelsProvider";
-import {
-  StateCurentHotelsType,
-  StateCurrentHotelsContext,
-} from "./CurrentHotelsProvider.tsx";
+
 export const useStatesHotels = (): StatesHotelsProviderType =>
   useContext(HotelsContext);
 export const useSetStetesHotels = (): setStateProviderType => {
@@ -19,14 +16,4 @@ export const useSetStetesHotels = (): setStateProviderType => {
   return context;
 };
 
-export const useStateCurrentHotels = (): StateCurentHotelsType => {
-  const context = useContext(
-    StateCurrentHotelsContext
-  );
-  if (!context) {
-    throw new Error(
-      "useStateCurrentHotels must be used within a CurrentHotelsProvider"
-    );
-  }
-  return context;
-};
+

@@ -5,7 +5,7 @@ import {
   HotelType,
 } from "../components/context/HotelsProvider";
 import { useEffect } from "react";
-import { useSetStetesHotels, useStateCurrentHotels } from "../components/context/useContexts";
+import { useSetStetesHotels, useStatesHotels } from "../components/context/useContexts";
 
 export default function Hotels() {
   const location = useLocation();
@@ -15,8 +15,7 @@ export default function Hotels() {
     location.search
   );
   const { setHotels, setIsLoading } = useSetStetesHotels();
-  const {currentHotels}=useStateCurrentHotels()
-  console.log(" hotels");
+  const {currentHotels}=useStatesHotels()
   
   useEffect(() => {
     if (data?.length) {

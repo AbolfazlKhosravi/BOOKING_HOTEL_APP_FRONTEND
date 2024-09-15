@@ -2,12 +2,13 @@ import { useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import { HotelType } from "../components/context/HotelsProvider";
 import Loader from "../components/Loader";
-import { useStateCurrentHotels } from "../components/context/useContexts";
 import { useEffect } from "react";
+import { useSetStetesHotels, useStatesHotels } from "../components/context/useContexts";
 
 function SingleHotel() {
   const { id } = useParams<string>();
-  const {currentHotels,setCurrentHotels}=useStateCurrentHotels()
+  const {currentHotels}=useStatesHotels()
+  const {setCurrentHotels}=useSetStetesHotels()
   const { isLoading, data } = useFetch<HotelType>(
     `http://localhost:3000/api/hotels/${id}`
   );
@@ -16,7 +17,6 @@ function SingleHotel() {
       setCurrentHotels(Number(id))
     }
   },[id,currentHotels,setCurrentHotels])
-  console.log("single hotel");
   
   if (isLoading) return <Loader />;
   return (

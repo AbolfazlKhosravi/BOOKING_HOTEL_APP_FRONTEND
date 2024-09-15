@@ -7,11 +7,9 @@ import HotelsLayout from "./components/Layout/HotelsLayout";
 import Hotels from "./routes/Hotels";
 import HotelsProvider from "./components/context/HotelsProvider";
 import SingleHotel from "./routes/SingleHotel";
-import CurrentHotelsProvider from "./components/context/CurrentHotelsProvider";
 function App() {
   return (
     <HotelsProvider>
-      <CurrentHotelsProvider>
         <div>
           <Toaster />
           <Routes>
@@ -24,7 +22,6 @@ function App() {
             </Route>
           </Routes>
         </div>
-      </CurrentHotelsProvider>
     </HotelsProvider>
   );
 }
