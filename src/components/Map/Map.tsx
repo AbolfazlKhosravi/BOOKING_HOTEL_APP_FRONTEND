@@ -36,7 +36,6 @@ const customMarkerIcon = L.divIcon({
 
 function Map({ markerLoacations, currentHotel }: PropsType) {
   const location =useLocation()
-  console.log(markerLoacations,location);
   
   const [mapCenter, setMapCenter] = useState<MapCenterType>([48, 5]);
   const [zoom, setZoom] = useState<number>(4);
@@ -64,10 +63,10 @@ function Map({ markerLoacations, currentHotel }: PropsType) {
   }, [positionGeoLocation]);
 
   useEffect(() => {
-    if (markerLoacations.length) {
-      setZoom(4);
-    }
-  }, [markerLoacations]);
+      if(location.pathname==="/hotels"){
+        setZoom(4);
+      }
+  }, [markerLoacations,location.pathname]);
   return (
     <div className="mapContainer">
       <MapContainer
@@ -146,7 +145,7 @@ function DetectClick() {
       if ((e.originalEvent.target as HTMLElement)?.id === "getYourLocatio") {
         return;
       }
-      navigate(`/bookmark?lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
+      navigate(`/bookmarks/add?lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
     },
   });
   return null;

@@ -14,7 +14,7 @@ function SingleHotel() {
   );
   
   useEffect(()=>{
-    if(id && currentHotel!==data){
+    if(id && data&&currentHotel!==data){
       setCurrentHotel(data)
     }
   },[id,currentHotel,setCurrentHotel,data])

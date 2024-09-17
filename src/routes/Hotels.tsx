@@ -15,15 +15,17 @@ export default function Hotels() {
     location.search
   );
   const { setHotels } = useSetStetesHotels();
-  const {currentHotel}=useStatesHotels()
+  const {currentHotel,hotels}=useStatesHotels()
   
   useEffect(() => {
-    if (data?.length) {
+    if (data?.length) { 
       setHotels(data);
     }else{
-      setHotels([]);
+      if(hotels.length){
+        setHotels([]);
+      }
     }
-  }, [data, setHotels]);
+  }, [data, setHotels,hotels]);
   if (isLoading) return <Loader />;
   if (!data) return <p>چیزی یافت نشد </p>;
   return (
