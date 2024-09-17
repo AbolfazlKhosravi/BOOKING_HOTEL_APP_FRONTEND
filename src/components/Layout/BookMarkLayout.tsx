@@ -7,7 +7,7 @@ function BookMarkLayout() {
       <div className="sidebar">
         <Outlet />
       </div>
-      <Map isLoading={false} hotels={[]}/>
+      <Map  markerLoacations={[]} currentHotel={null}/>
     </div>
   );
 }  

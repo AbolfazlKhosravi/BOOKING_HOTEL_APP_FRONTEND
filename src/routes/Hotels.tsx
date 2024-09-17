@@ -14,15 +14,16 @@ export default function Hotels() {
     "http://localhost:3000/api/hotels",
     location.search
   );
-  const { setHotels, setIsLoading } = useSetStetesHotels();
-  const {currentHotels}=useStatesHotels()
+  const { setHotels } = useSetStetesHotels();
+  const {currentHotel}=useStatesHotels()
   
   useEffect(() => {
     if (data?.length) {
       setHotels(data);
-      setIsLoading(isLoading);
+    }else{
+      setHotels([]);
     }
-  }, [data, setHotels,setIsLoading,isLoading]);
+  }, [data, setHotels]);
   if (isLoading) return <Loader />;
   if (!data) return <p>چیزی یافت نشد </p>;
   return (
@@ -34,7 +35,7 @@ export default function Hotels() {
             key={item.id}
             to={`/hotels/${item.id}?lat=${item.latitude}&lon=${item.longitude}`}
           >
-            <div className={`searchItem ${currentHotels===item.id&&"current-hotel"}`}>
+            <div className={`searchItem ${currentHotel===item&&"current-hotel"}`}>
               <img src={item.pictuer_url} alt={item.name} />
               <div className="searchItemDesc">
                 <p className="location">{item.smart_location}</p>

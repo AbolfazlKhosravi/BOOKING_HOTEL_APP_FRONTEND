@@ -6,21 +6,40 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import Loader from "../Loader";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useGeoLocation from "../../hooks/useGeoLocation";
-import { LeafletMouseEvent } from "leaflet";
+import L, { LeafletMouseEvent } from "leaflet";
 import { HotelType } from "../context/HotelsProvider";
+import { IoLocation } from "react-icons/io5";
+import { renderToStaticMarkup } from "react-dom/server";
 export type MapCenterType = [number, number];
+type PropsType = {
+  markerLoacations: HotelType[];
+  currentHotel: HotelType | null;
+};
+const customMarkerIcon = L.divIcon({
+  className: "custom-marker",
+  html: renderToStaticMarkup(
+    <IoLocation
+      size={40}
+      color="#007BFF"
+      style={{
+        filter: "drop-shadow(8px 16px 10px rgba(0,0,0,0.6))",
+      }}
+    />
+  ),
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [1, -30],
+});
 
-type PropsType ={
-  isLoading:boolean,
-  hotels : HotelType[]
-}
-function Map({hotels,isLoading}:PropsType) {
+function Map({ markerLoacations, currentHotel }: PropsType) {
+  const location =useLocation()
+  console.log(markerLoacations,location);
   
   const [mapCenter, setMapCenter] = useState<MapCenterType>([48, 5]);
+  const [zoom, setZoom] = useState<number>(4);
   const [searchParams] = useSearchParams();
   const {
     err,
@@ -32,26 +51,41 @@ function Map({hotels,isLoading}:PropsType) {
   const lon = searchParams.get("lon");
 
   useEffect(() => {
-    if (lat && lon) setMapCenter([Number(lat), Number(lon)]);
+    if (lat && lon) {
+      setMapCenter([Number(lat), Number(lon)]);
+      setZoom(13);
+    }
   }, [lat, lon]);
   useEffect(() => {
-    if (positionGeoLocation) setMapCenter(positionGeoLocation);
+    if (positionGeoLocation) {
+      setMapCenter(positionGeoLocation);
+      setZoom(13);
+    }
   }, [positionGeoLocation]);
 
-  if (isLoading) return <Loader />;
+  useEffect(() => {
+    if (markerLoacations.length) {
+      setZoom(4);
+    }
+  }, [markerLoacations]);
   return (
     <div className="mapContainer">
       <MapContainer
         className="map"
         center={mapCenter}
-        zoom={5}
+        zoomControl={false}
+        zoom={zoom}
         scrollWheelZoom={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         />
-        <button onClick={getGeoLocation} className="getLocation">
+        <button
+          id="getYourLocatio"
+          onClick={getGeoLocation}
+          className="getLocation"
+        >
           {isLoadingGeoLocation
             ? "loading"
             : positionGeoLocation
@@ -60,32 +94,60 @@ function Map({hotels,isLoading}:PropsType) {
             ? err
             : "get your Location"}
         </button>
-        <ChangeCenter position={mapCenter} />
+        <ChangeCenterAndZoom position={mapCenter} zoom={zoom} />
         <DetectClick />
-        {hotels.map((item) => {
-          return (
-            <Marker key={item.id} position={[item.latitude, item.longitude]}>
-              <Popup>{item.smart_location}</Popup>
-            </Marker>
-          );
-        })}
+        {markerLoacations.length &&
+          markerLoacations.map((item) => {
+            return (
+              <Marker key={item.id} position={[item.latitude, item.longitude]}>
+                <Popup>{item.smart_location}</Popup>
+              </Marker>
+            );
+          })}
+        {location.pathname!=="/hotels"&&currentHotel && (
+          <Marker position={[currentHotel.latitude, currentHotel.longitude]}>
+            <Popup>{currentHotel.smart_location}</Popup>
+          </Marker>
+        )}
+        {!markerLoacations.length && !currentHotel && lat && lon && (
+          <Marker position={[Number(lat), Number(lon)]}>
+            <Popup>this is somthing to you choised</Popup>
+          </Marker>
+        )}
+
+        {positionGeoLocation?.length && (
+          <Marker
+            icon={customMarkerIcon}
+            position={[positionGeoLocation[0], positionGeoLocation[1]]}
+          >
+            <Popup>this is your location</Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );
 }
 type ChangeCenterType = {
   position: MapCenterType;
+  zoom: number;
 };
-function ChangeCenter({ position }: ChangeCenterType) {
+function ChangeCenterAndZoom({ position, zoom }: ChangeCenterType) {
   const map = useMap();
-  map.setView(position);
+  map.flyTo(position, zoom, {
+    animate: true,
+    duration: 2,
+  });
   return null;
 }
 function DetectClick() {
   const navigate = useNavigate();
   useMapEvents({
-    click: (e: LeafletMouseEvent) =>
-      navigate(`/bookmark?lat=${e.latlng.lat}&lng=${e.latlng.lng}`),
+    click: (e: LeafletMouseEvent) => {
+      if ((e.originalEvent.target as HTMLElement)?.id === "getYourLocatio") {
+        return;
+      }
+      navigate(`/bookmark?lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
+    },
   });
   return null;
 }

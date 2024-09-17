@@ -20,19 +20,16 @@ type PropsType = {
 };
 type States ={
   hotels: HotelType[],
-  isLoading: boolean,
-  currentHotels:number,
+  currentHotel:HotelType|null,
 }
 export type StatesHotelsProviderType = States;
 export interface setStateProviderType {
   setHotels:React.Dispatch<React.SetStateAction<HotelType[]>>;
-  setIsLoading:React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentHotels:React.Dispatch<React.SetStateAction<number>>
+  setCurrentHotel:React.Dispatch<React.SetStateAction<HotelType|null>>
  }
 export const HotelsContext = createContext<StatesHotelsProviderType>({
   hotels:[],
-  isLoading:true,
-  currentHotels:-1
+  currentHotel:null
 });
 
 export const SetStatesHotelsContext = createContext< setStateProviderType | undefined>(
@@ -41,19 +38,16 @@ export const SetStatesHotelsContext = createContext< setStateProviderType | unde
 
 function HotelsProvider({ children }: PropsType) {
   const [hotels, setHotels] = useState<HotelType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [currentHotels,setCurrentHotels]=useState<number>(-1)
+  const [currentHotel,setCurrentHotel]=useState<HotelType|null>(null)
   
   return (
     <HotelsContext.Provider value={{
       hotels,
-      isLoading,
-      currentHotels
+      currentHotel
     }}>
       <SetStatesHotelsContext.Provider value={{
         setHotels,
-        setIsLoading,
-        setCurrentHotels
+        setCurrentHotel
       }}>
         {children}
       </SetStatesHotelsContext.Provider>

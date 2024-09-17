@@ -3,14 +3,14 @@ import Map from "../Map/Map";
 import { useStatesHotels } from "../context/useContexts";
 
 function HotelsLayout() {
-  const { hotels, isLoading } = useStatesHotels();
+  const { hotels,currentHotel } = useStatesHotels();
   
   return (
     <div className="appLayout">
       <div className="sidebar">
         <Outlet />
       </div>
-      <Map hotels={hotels} isLoading={isLoading}/>
+      <Map markerLoacations={hotels} currentHotel={currentHotel} />
     </div>
   );
 }  

@@ -1,6 +1,6 @@
+import { HotelType } from "../components/context/HotelsProvider";
 import LocationList from "../components/LocationList/LocationList";
 import useFetch from "../hooks/useFetch";
-import { HotelType } from "./Hotels";
 
 export type HomeDataType = {
   hotels: HotelType[];

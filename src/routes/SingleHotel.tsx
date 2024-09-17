@@ -7,16 +7,17 @@ import { useSetStetesHotels, useStatesHotels } from "../components/context/useCo
 
 function SingleHotel() {
   const { id } = useParams<string>();
-  const {currentHotels}=useStatesHotels()
-  const {setCurrentHotels}=useSetStetesHotels()
+  const {currentHotel}=useStatesHotels()
+  const {setCurrentHotel}=useSetStetesHotels()
   const { isLoading, data } = useFetch<HotelType>(
     `http://localhost:3000/api/hotels/${id}`
   );
+  
   useEffect(()=>{
-    if(id && currentHotels!==Number(id)){
-      setCurrentHotels(Number(id))
+    if(id && currentHotel!==data){
+      setCurrentHotel(data)
     }
-  },[id,currentHotels,setCurrentHotels])
+  },[id,currentHotel,setCurrentHotel,data])
   
   if (isLoading) return <Loader />;
   return (
