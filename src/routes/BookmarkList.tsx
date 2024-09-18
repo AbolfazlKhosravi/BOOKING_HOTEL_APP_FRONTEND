@@ -15,7 +15,7 @@ function BookmarkList() {
   );
 
   const { setBookmarks } = useSetStetesBookmarks();
-  const { bookmarks } = useStatesBookmarks();
+  const { bookmarks,currentBookmark } = useStatesBookmarks();
 
   useEffect(() => {
     if (data?.length) {
@@ -38,7 +38,7 @@ function BookmarkList() {
               to={`${item.id}?lat:${item.latitude}&lon=${item.longitude}`}
               key={item.id}
             >
-              <div className="bookmarlItem">
+              <div className={`bookmarlItem ${item.id === currentBookmark?.id&&"current-bookmark"}`}>
                 <ReactCountryFlag svg countryCode={item.country_code} />
                 &nbsp; <strong>{item.city_name}</strong> &nbsp;
                 <span>{item.country}</span>
