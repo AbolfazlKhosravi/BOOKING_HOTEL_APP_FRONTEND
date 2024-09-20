@@ -7,10 +7,10 @@ interface FetchResult<T> {
   isLoading: boolean;
 }
 
-function useFetch<T>(URL: string, query: string=""): FetchResult<T> {
-  const [data, setData] = useState<T|null>(null);
+function useFetch<T>(URL: string, query: string = ""): FetchResult<T> {
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {

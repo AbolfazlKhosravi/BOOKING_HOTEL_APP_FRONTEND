@@ -7,16 +7,22 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useGeoLocation from "../../hooks/useGeoLocation";
 import L, { LeafletMouseEvent } from "leaflet";
-import { HotelType } from "../context/HotelsProvider";
 import { IoLocation } from "react-icons/io5";
 import { renderToStaticMarkup } from "react-dom/server";
+import useUrlLocation from "../../hooks/useUrlLocation";
 export type MapCenterType = [number, number];
+interface markerLoacationType {
+  id: number;
+  latitude: number;
+  longitude: number;
+  location: string;
+}
 type PropsType = {
-  markerLoacations: HotelType[];
-  currentHotel: HotelType | null;
+  markerLoacations: markerLoacationType[];
+  currentMarkerLocation: markerLoacationType | null;
 };
 const customMarkerIcon = L.divIcon({
   className: "custom-marker",
@@ -34,20 +40,18 @@ const customMarkerIcon = L.divIcon({
   popupAnchor: [1, -30],
 });
 
-function Map({ markerLoacations, currentHotel }: PropsType) {
-  const location =useLocation()
-  
+function Map({ markerLoacations, currentMarkerLocation }: PropsType) {
+  const location = useLocation();
+
   const [mapCenter, setMapCenter] = useState<MapCenterType>([48, 5]);
   const [zoom, setZoom] = useState<number>(4);
-  const [searchParams] = useSearchParams();
+  const [lat, lon] = useUrlLocation();
   const {
     err,
     getGeoLocation,
     isLoading: isLoadingGeoLocation,
     position: positionGeoLocation,
   } = useGeoLocation();
-  const lat = searchParams.get("lat");
-  const lon = searchParams.get("lon");
 
   useEffect(() => {
     if (lat && lon) {
@@ -63,10 +67,11 @@ function Map({ markerLoacations, currentHotel }: PropsType) {
   }, [positionGeoLocation]);
 
   useEffect(() => {
-      if(location.pathname==="/hotels"){
-        setZoom(4);
-      }
-  }, [markerLoacations,location.pathname]);
+    if (location.pathname === "/hotels" || location.pathname === "/bookmarks") {
+      setZoom(4);
+    }
+  }, [markerLoacations, location.pathname]);
+  
   return (
     <div className="mapContainer">
       <MapContainer
@@ -99,16 +104,23 @@ function Map({ markerLoacations, currentHotel }: PropsType) {
           markerLoacations.map((item) => {
             return (
               <Marker key={item.id} position={[item.latitude, item.longitude]}>
-                <Popup>{item.smart_location}</Popup>
+                <Popup>{item.location}</Popup>
               </Marker>
             );
           })}
-        {location.pathname!=="/hotels"&&currentHotel && (
-          <Marker position={[currentHotel.latitude, currentHotel.longitude]}>
-            <Popup>{currentHotel.smart_location}</Popup>
-          </Marker>
-        )}
-        {!markerLoacations.length && !currentHotel && lat && lon && (
+        {location.pathname !== "/hotels" &&
+          location.pathname !== "/bookmarks" &&
+          currentMarkerLocation && (
+            <Marker
+              position={[
+                currentMarkerLocation.latitude,
+                currentMarkerLocation.longitude,
+              ]}
+            >
+              <Popup>{currentMarkerLocation.location}</Popup>
+            </Marker>
+          )}
+        {location.pathname === "/bookmarks/add" && lat && lon && (
           <Marker position={[Number(lat), Number(lon)]}>
             <Popup>this is somthing to you choised</Popup>
           </Marker>

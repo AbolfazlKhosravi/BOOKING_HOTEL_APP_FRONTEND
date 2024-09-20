@@ -15,7 +15,7 @@ function BookmarkList() {
   );
 
   const { setBookmarks } = useSetStetesBookmarks();
-  const { bookmarks,currentBookmark } = useStatesBookmarks();
+  const { bookmarks, currentBookmark } = useStatesBookmarks();
 
   useEffect(() => {
     if (data?.length) {
@@ -35,13 +35,19 @@ function BookmarkList() {
         {bookmarks.map((item) => {
           return (
             <Link
-              to={`${item.id}?lat:${item.latitude}&lon=${item.longitude}`}
+              to={`${item.id}?lat=${item.latitude}&lon=${item.longitude}`}
               key={item.id}
             >
-              <div className={`bookmarlItem ${item.id === currentBookmark?.id&&"current-bookmark"}`}>
-                <ReactCountryFlag svg countryCode={item.country_code} />
-                &nbsp; <strong>{item.city_name}</strong> &nbsp;
-                <span>{item.country}</span>
+              <div
+                className={`bookmarkItem ${
+                  item.id === currentBookmark?.id && "current-bookmark"
+                }`}
+              >
+                <div>
+                  <ReactCountryFlag svg countryCode={item.country_code} />
+                  &nbsp; <strong>{item.city_name}</strong> &nbsp;
+                  <span>{item.country}</span>
+                </div>
               </div>
             </Link>
           );

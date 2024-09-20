@@ -31,11 +31,14 @@ function SingleBookmark() {
       <button onClick={() => navigate(-1)} className="btn btn--back">
         &larr; Back
       </button>
-      <h2>{data.city_name}</h2>
-      <div className="bookmarlItem">
-        <ReactCountryFlag svg countryCode={data?.country_code} />
-        &nbsp; <strong>{data?.city_name}</strong> &nbsp;
-        <span>{data?.country}</span>
+      <h2 style={{ marginTop: "10px" }}>{data.city_name}</h2>
+      <div style={{ marginTop: "10px" }} className="bookmarkItem">
+        <div>
+          {" "}
+          <ReactCountryFlag svg countryCode={data?.country_code} />
+          &nbsp; <strong>{data?.city_name}</strong> &nbsp;
+          <span>{data?.country}</span>
+        </div>
       </div>
     </div>
   );
