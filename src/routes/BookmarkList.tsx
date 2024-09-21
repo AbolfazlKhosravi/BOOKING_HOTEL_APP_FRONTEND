@@ -22,14 +22,9 @@ function BookmarkList() {
   const { bookmarks, currentBookmark } = useStatesBookmarks();
 
   useEffect(() => {
-    if (data?.length ) {
-      setBookmarks(data);
-    } else {
-      if (bookmarks.length) {
-        setBookmarks([]);
-      }
-    }
-  }, [data, setBookmarks, bookmarks]);
+    setBookmarks(data||[]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
   const handleDelete = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     id: number

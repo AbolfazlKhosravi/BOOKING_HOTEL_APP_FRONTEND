@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import Loader from "../components/Loader";
-import {
-  HotelType,
-} from "../components/context/HotelsProvider";
+import { HotelType } from "../components/context/HotelsProvider";
 import { useEffect } from "react";
-import { useSetStetesHotels, useStatesHotels } from "../components/context/useContexts";
+import {
+  useSetStetesHotels,
+  useStatesHotels,
+} from "../components/context/useContexts";
 
 export default function Hotels() {
   const location = useLocation();
@@ -15,29 +16,27 @@ export default function Hotels() {
     location.search
   );
   const { setHotels } = useSetStetesHotels();
-  const {currentHotel,hotels}=useStatesHotels()
+  const { currentHotel, hotels } = useStatesHotels();
   
   useEffect(() => {
-    if (data?.length) { 
-      setHotels(data);
-    }else{
-      if(hotels.length){
-        setHotels([]);
-      }
-    }
-  }, [data, setHotels,hotels]);
+    setHotels(data || []);
+  }, [data, setHotels]);
   if (isLoading) return <Loader />;
   if (!data) return <p>چیزی یافت نشد </p>;
   return (
     <div className="searchList">
       <h2>Search Results ({data.length})</h2>
-      {data.map((item) => {
+      {hotels.map((item) => {
         return (
           <Link
             key={item.id}
             to={`/hotels/${item.id}?lat=${item.latitude}&lon=${item.longitude}`}
           >
-            <div className={`searchItem ${currentHotel===item&&"current-hotel"}`}>
+            <div
+              className={`searchItem ${
+                currentHotel === item && "current-hotel"
+              }`}
+            >
               <img src={item.pictuer_url} alt={item.name} />
               <div className="searchItemDesc">
                 <p className="location">{item.smart_location}</p>
