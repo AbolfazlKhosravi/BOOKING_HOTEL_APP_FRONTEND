@@ -19,8 +19,8 @@ function useFetch<T>(URL: string, query: string = ""): FetchResult<T> {
         setData(data);
       } catch (error) {
         setData(null);
-        if (error instanceof Error) {
-          toast.error(error?.message || "An error occurred.");
+        if (axios.isAxiosError(error)) {
+          toast.error(error?.response?.data || "An error occurred.");
         } else {
           console.error("An unknown error occurred");
         }

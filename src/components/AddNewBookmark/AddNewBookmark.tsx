@@ -27,7 +27,7 @@ const BASE_GEOCODING_URL =
 function AddNewBookmark() {
   const [cityName, setCityName] = useState<string>("");
   const [country, setCountry] = useState<string>("");
-  const [countryCode, setCountryCode] = useState<string>("IR");
+  const [countryCode, setCountryCode] = useState<string>("");
   const [hostLocation, setHostLocation] = useState<string>("");
   const [isLoadingLocationData, setIsLoadingLocationData] =
     useState<boolean>(false);
@@ -53,7 +53,7 @@ function AddNewBookmark() {
         }
         setCityName(data.city || data.locality || "");
         setCountry(data.countryName || "");
-        setCountryCode(data.countryCode || "IR");
+        setCountryCode(data.countryCode || "");
         setHostLocation(
           data.localityInfo?.administrative[3]?.description ||
             data.localityInfo?.administrative[2]?.description ||
@@ -62,7 +62,7 @@ function AddNewBookmark() {
       } catch (error) {
         setCityName("");
         setCountry("");
-        setCountryCode("IR");
+        setCountryCode("");
         setHostLocation("");
         if (error instanceof Error) {
           toast.error(error.message);

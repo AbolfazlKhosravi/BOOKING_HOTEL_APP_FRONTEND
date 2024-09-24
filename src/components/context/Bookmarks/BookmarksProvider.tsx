@@ -202,6 +202,7 @@ function BookmarksProvider({ children }: PropsType) {
   }, [location.pathname]);
 
   const getBookmark = async (id: number): Promise<void> => {
+    if (id === currentBookmark?.id) return;
     dispatch({ type: "GET_BOOKMARK/PENDING" });
     try {
       const { data } = await axios.get<BookmarkType>(
