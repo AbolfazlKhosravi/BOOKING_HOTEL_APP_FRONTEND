@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import toast, { LoaderIcon } from "react-hot-toast";
 import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
+import { useSetStetesBookmarks, useStatesBookmarks } from "../context/Bookmarks/useContexts";
 interface GEOCODINGTYPE {
   city?: string;
   locality?: string;
@@ -13,17 +14,26 @@ interface GEOCODINGTYPE {
     administrative: Array<{ description?: string }>;
   };
 }
+export interface BookmarkFrontType {
+  cityName: string;
+  country: string;
+  countryCode: string;
+  lat: number;
+  lon: number;
+  hostLocation: string;
+}
 const BASE_GEOCODING_URL =
   "https://api.bigdatacloud.net/data/reverse-geocode-client";
 function AddNewBookmark() {
   const [cityName, setCityName] = useState<string>("");
   const [country, setCountry] = useState<string>("");
-  const [countryCode, setCountryCode] = useState<string>("");
+  const [countryCode, setCountryCode] = useState<string>("IR");
   const [hostLocation, setHostLocation] = useState<string>("");
   const [isLoadingLocationData, setIsLoadingLocationData] =
     useState<boolean>(false);
-  const [isLoadingAddBookmark, setIsLoadingAddBookmark] =
-    useState<boolean>(false);
+
+    const {  loadingAddBookmark } = useStatesBookmarks();
+  const { addBookmark } = useSetStetesBookmarks();
   const navigate = useNavigate();
   const [lat, lon] = useUrlLocation();
 
@@ -43,7 +53,7 @@ function AddNewBookmark() {
         }
         setCityName(data.city || data.locality || "");
         setCountry(data.countryName || "");
-        setCountryCode(data.countryCode || "");
+        setCountryCode(data.countryCode || "IR");
         setHostLocation(
           data.localityInfo?.administrative[3]?.description ||
             data.localityInfo?.administrative[2]?.description ||
@@ -52,7 +62,7 @@ function AddNewBookmark() {
       } catch (error) {
         setCityName("");
         setCountry("");
-        setCountryCode("");
+        setCountryCode("IR");
         setHostLocation("");
         if (error instanceof Error) {
           toast.error(error.message);
@@ -68,28 +78,15 @@ function AddNewBookmark() {
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    setIsLoadingAddBookmark(true);
-    try {
-      const { data } = await axios.post<{ message: string }>(
-        "http://localhost:3000/api/bookmarks/addbookmark",
-        {
-          cityName,
-          country,
-          countryCode,
-          lat,
-          lon,
-          hostLocation,
-        }
-      );
-      toast.success(data.message);
-      navigate("/bookmarks");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data.message);
-      }
-    } finally {
-      setIsLoadingAddBookmark(false);
+    const data:BookmarkFrontType={
+      cityName,
+      country,
+      countryCode,
+      lat,
+      lon,
+      hostLocation,
     }
+    addBookmark(data)
   };
 
   return (
@@ -159,7 +156,7 @@ function AddNewBookmark() {
             show Bookmarks
           </button>
           <button type="submit" className="btn btn--primary">
-            {isLoadingAddBookmark ? (
+            {loadingAddBookmark ? (
               <LoaderIcon style={{ width: "1.3rem", height: "1.3rem" }} />
             ) : (
               "Add Bookmark"

@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { BookmarkType } from "../components/context/Bookmarks/BookmarksProvider";
 import Loader from "../components/Loader";
-import useFetch from "../hooks/useFetch";
 import {
   useSetStetesBookmarks,
   useStatesBookmarks,
@@ -9,44 +6,22 @@ import {
 import ReactCountryFlag from "react-country-flag";
 import { Link } from "react-router-dom";
 import { HiTrash } from "react-icons/hi";
-import axios from "axios";
-import toast, { LoaderIcon } from "react-hot-toast";
+import  { LoaderIcon } from "react-hot-toast";
 
 function BookmarkList() {
-  const [isLoadingDelete, setIsloadingDelete] = useState<boolean>(false);
-  const { isLoading, data } = useFetch<BookmarkType[]>(
-    "http://localhost:3000/api/bookmarks"
-  );
 
-  const { setBookmarks } = useSetStetesBookmarks();
-  const { bookmarks, currentBookmark } = useStatesBookmarks();
+  const {deleteBookmark } = useSetStetesBookmarks();
+  const { bookmarks, currentBookmark,loadingGetBookmarks,loadingDeleteBookmark} = useStatesBookmarks();
 
-  useEffect(() => {
-    setBookmarks(data||[]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  
   const handleDelete = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     id: number
   ): Promise<void> => {
-    setIsloadingDelete(true);
     e.preventDefault();
-    try {
-      const { data } = await axios.delete<{
-        message: string;
-        bookmarks: BookmarkType[];
-      }>(`http://localhost:3000/api/bookmarks/${id}`);
-      setBookmarks(data.bookmarks);
-      toast.success(data.message);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data.message);
-      }
-    } finally {
-      setIsloadingDelete(false);
-    }
+    deleteBookmark(id)
   };
-  if (isLoading) return <Loader />;
+  if (loadingGetBookmarks) return <Loader />;
   return (
     <div>
       <h2>Bookmark List</h2>
@@ -69,7 +44,7 @@ function BookmarkList() {
                 </div>
                 <div>
                   <button onClick={(e) => handleDelete(e, item.id)}>
-                    {isLoadingDelete ? (
+                    {loadingDeleteBookmark ? (
                       <LoaderIcon
                         style={{ width: "1.3rem", height: "1.3rem" }}
                       />

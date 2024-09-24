@@ -2,18 +2,11 @@ import { useContext } from "react";
 import {
   BookmarksContext,
   SetStatesBookmarksContext,
-  StatesBookmarksProviderType,
-  setStatesBookmarksProviderType,
+  StateBookmarksType,
+  HandlerBookmarksType,
 } from "./BookmarksProvider";
 
-export const useStatesBookmarks = (): StatesBookmarksProviderType =>
+export const useStatesBookmarks = (): StateBookmarksType =>
   useContext(BookmarksContext);
-export const useSetStetesBookmarks = (): setStatesBookmarksProviderType => {
-  const context = useContext(SetStatesBookmarksContext);
-  if (!context) {
-    throw new Error(
-      "useSetStetesBookmarks must be used within a BookmarksProvider"
-    );
-  }
-  return context;
-};
+export const useSetStetesBookmarks = (): HandlerBookmarksType =>
+  useContext(SetStatesBookmarksContext);

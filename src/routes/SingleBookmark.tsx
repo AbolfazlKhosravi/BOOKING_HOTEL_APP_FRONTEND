@@ -1,43 +1,37 @@
 import { useNavigate, useParams } from "react-router-dom";
-import useFetch from "../hooks/useFetch";
 import Loader from "../components/Loader";
-import { useEffect } from "react";
 import {
   useSetStetesBookmarks,
   useStatesBookmarks,
 } from "../components/context/Bookmarks/useContexts";
-import { BookmarkType } from "../components/context/Bookmarks/BookmarksProvider";
 import ReactCountryFlag from "react-country-flag";
+import { useEffect } from "react";
 
 function SingleBookmark() {
+  const  navigate  = useNavigate();
   const { id } = useParams<string>();
-  const { currentBookmark } = useStatesBookmarks();
-  const { setCurrentBookmark } = useSetStetesBookmarks();
-  const { isLoading, data } = useFetch<BookmarkType>(
-    `http://localhost:3000/api/bookmarks/${id}`
-  );
-  const navigate = useNavigate();
+  const { currentBookmark, loadingGetBookmark } = useStatesBookmarks();
+  const { getBookmark } = useSetStetesBookmarks();
 
   useEffect(() => {
-    if (id && data && currentBookmark !== data) {
-      setCurrentBookmark(data);
-    }
-  }, [id, data, currentBookmark, setCurrentBookmark]);
+    getBookmark(Number(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-  if (isLoading) return <Loader />;
-  if (!data) return <div>جیزی پیدا نشد</div>;
+  if (loadingGetBookmark) return <Loader />;
+  if (!currentBookmark) return <div>جیزی پیدا نشد</div>;
   return (
     <div>
       <button onClick={() => navigate(-1)} className="btn btn--back">
         &larr; Back
       </button>
-      <h2 style={{ marginTop: "10px" }}>{data.city_name}</h2>
+      <h2 style={{ marginTop: "10px" }}>{currentBookmark.city_name}</h2>
       <div style={{ marginTop: "10px" }} className="bookmarkItem">
         <div>
           {" "}
-          <ReactCountryFlag svg countryCode={data?.country_code} />
-          &nbsp; <strong>{data?.city_name}</strong> &nbsp;
-          <span>{data?.country}</span>
+          <ReactCountryFlag svg countryCode={currentBookmark?.country_code} />
+          &nbsp; <strong>{currentBookmark?.city_name}</strong> &nbsp;
+          <span>{currentBookmark?.country}</span>
         </div>
       </div>
     </div>
