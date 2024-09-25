@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import toast, { LoaderIcon } from "react-hot-toast";
 import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
-import { useSetStetesBookmarks, useStatesBookmarks } from "../context/Bookmarks/useContexts";
+import {
+  useSetStetesBookmarks,
+  useStatesBookmarks,
+} from "../context/Bookmarks/useContexts";
 interface GEOCODINGTYPE {
   city?: string;
   locality?: string;
@@ -32,7 +35,7 @@ function AddNewBookmark() {
   const [isLoadingLocationData, setIsLoadingLocationData] =
     useState<boolean>(false);
 
-    const {  loadingAddBookmark } = useStatesBookmarks();
+  const { loadingAddBookmark } = useStatesBookmarks();
   const { addBookmark } = useSetStetesBookmarks();
   const navigate = useNavigate();
   const [lat, lon] = useUrlLocation();
@@ -43,7 +46,10 @@ function AddNewBookmark() {
       setIsLoadingLocationData(true);
       try {
         const { data } = await axios.get<GEOCODINGTYPE>(
-          `${BASE_GEOCODING_URL}?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+          `${BASE_GEOCODING_URL}?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
+          {
+            withCredentials: false,
+          }
         );
 
         if (!data.countryCode) {
@@ -78,15 +84,15 @@ function AddNewBookmark() {
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    const data:BookmarkFrontType={
+    const data: BookmarkFrontType = {
       cityName,
       country,
       countryCode,
       lat,
       lon,
       hostLocation,
-    }
-    addBookmark(data)
+    };
+    addBookmark(data);
   };
 
   return (

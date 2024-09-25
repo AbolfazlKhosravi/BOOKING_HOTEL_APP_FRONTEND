@@ -192,9 +192,9 @@ function BookmarksProvider({ children }: PropsType) {
         if (axios.isAxiosError(error)) {
           dispatch({
             type: "GET_BOOKMARKS/REJECTED",
-            payload: error.response?.data,
+            payload: error.response?.data.message,
           });
-          toast.error(error?.response?.data || "An error occurred.");
+          toast.error(error?.response?.data.message || "An error occurred.");
         }
       }
     };
@@ -215,9 +215,9 @@ function BookmarksProvider({ children }: PropsType) {
       if (axios.isAxiosError(error)) {
         dispatch({
           type: "GET_BOOKMARK/REJECTED",
-          payload: error.response?.data,
+          payload: error.response?.data.message,
         });
-        toast.error(error?.response?.data || "An error occurred.");
+        toast.error(error?.response?.data.message || "An error occurred.");
       }
     }
   };

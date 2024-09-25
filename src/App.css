@@ -332,6 +332,10 @@
   background-color: var(--primary-600);
   color: #fff;
 }
+.btn--secondary {
+  background-color: var(--primary-400);
+  color: #7d7a7a;
+}
 
 .btn--back {
   border: 1px solid var(--text-400);

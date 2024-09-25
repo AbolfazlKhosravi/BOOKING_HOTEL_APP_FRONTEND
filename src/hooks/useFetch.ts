@@ -20,7 +20,7 @@ function useFetch<T>(URL: string, query: string = ""): FetchResult<T> {
       } catch (error) {
         setData(null);
         if (axios.isAxiosError(error)) {
-          toast.error(error?.response?.data || "An error occurred.");
+          toast.error(error?.response?.data?.message || "An error occurred.");
         } else {
           console.error("An unknown error occurred");
         }
